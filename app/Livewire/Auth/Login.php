@@ -23,11 +23,15 @@ class Login extends Component
 
     public bool $remember = false;
 
-    /**
+
+
+    /** 
      * Handle an incoming authentication request.
      */
     public function login(): void
     {
+
+        $remaining = RateLimiter::remaining($this->throttleKey(), 5);
         $this->validate();
 
         $this->ensureIsNotRateLimited();
@@ -35,10 +39,11 @@ class Login extends Component
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
-            throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
-            ]);
-        }
+          throw ValidationException::withMessages([
+    'email' => __('auth.failed') . '
+    ' . __('auth.attempts', ['attempts' => $remaining - 1]),
+]);
+        } 
 
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
@@ -65,6 +70,7 @@ class Login extends Component
                 'minutes' => ceil($seconds / 60),
             ]),
         ]);
+
     }
 
     /**
@@ -72,6 +78,7 @@ class Login extends Component
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return request()->ip();
+        // return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
     }
 }
