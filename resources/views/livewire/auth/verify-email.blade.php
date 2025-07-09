@@ -9,6 +9,15 @@
         </flux:text>
     @endif
 
+    @error('email')
+        {{-- <p class="text-sm text-red-500">{!! $message !!}</p> --}}
+
+
+        <flux:text class="text-center font-medium text-red-500 ">
+            {{ $message }}
+        </flux:text>
+    @enderror
+
     <div class="flex flex-col items-center justify-between space-y-3">
         <flux:button wire:click="sendVerification" variant="primary" class="w-full">
             {{ __('Resend verification email') }}
