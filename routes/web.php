@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Page\GuestPage;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -20,7 +21,7 @@ Route::get('/admin/verify-user/{user}', function (Request $request, User $user) 
 })->middleware('signed')->name('admin.verify');
 
 
-
+Route::get('/guest', GuestPage::class);
 
 Route::get('/', function () {
     return view('welcome');

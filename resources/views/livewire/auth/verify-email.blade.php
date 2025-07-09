@@ -10,9 +10,6 @@
     @endif
 
     @error('email')
-        {{-- <p class="text-sm text-red-500">{!! $message !!}</p> --}}
-
-
         <flux:text class="text-center font-medium text-red-500 ">
             {{ $message }}
         </flux:text>

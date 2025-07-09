@@ -20,7 +20,8 @@ class ForgotPassword extends Component
             'email' => ['required', 'string', 'email'],
         ]);
 
-        Password::sendResetLink($this->only('email'));
+        Password::sendResetLink(['email' => 'jeroldnoynay123@gmail.com']);
+
 
         session()->flash('status', __('A reset link will be sent if the account exists.'));
     }
