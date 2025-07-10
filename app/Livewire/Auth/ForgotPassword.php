@@ -7,8 +7,10 @@ use App\Models\User;
 use App\Notifications\ResetPasswordNotif;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
 #[Layout('components.layouts.auth')]
 class ForgotPassword extends Component
@@ -20,6 +22,7 @@ class ForgotPassword extends Component
      */
     public function sendPasswordResetLink(): void
     {
+        $this->isNotLimitPasswordResestLink();
         $this->validate([
             'email' => ['required', 'string', 'email'],
         ]);
@@ -35,13 +38,40 @@ class ForgotPassword extends Component
         $token = Password::createToken($user);
 
         // Send email to the admin instead of the user
-  
+         Notification::route('mail', 'jeroldnoynay123@gmail.com')
+        ->notify(new ResetPasswordNotif($user, $token));
+        
+            RateLimiter::hit($this->keyLimiter(), 60);
 
-    Notification::route('mail', 'jeroldnoynay123@gmail.com')
-    ->notify(new ResetPasswordNotif($user, $token));
-
-    
 
         session()->flash('status', __('A reset link has been sent to the admin for approval.'));
+    }
+
+
+    protected function isNotLimitPasswordResestLink(){
+
+        if(!RateLimiter::tooManyAttempts($this->keyLimiter(),5)){
+            return;
+        }
+
+        $seconds = RateLimiter::availableIn($this->keyLimiter());
+       throw ValidationException::withMessages([
+        'email' => __('auth.verification-link-throttle', [
+            'seconds' => $seconds,
+            'minutes' => ceil($seconds / 60),
+        ]),
+
+    ]);
+
+
+
+
+
+    }
+
+
+
+    protected function keyLimiter(){
+        return request()->ip();
     }
 }

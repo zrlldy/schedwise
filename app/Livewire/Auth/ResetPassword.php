@@ -55,7 +55,6 @@ class ResetPassword extends Component
                     'password' => Hash::make($this->password),
                     'remember_token' => Str::random(60),
                 ])->save();
-
                 event(new PasswordReset($user));
             }
         );
