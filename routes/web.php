@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/reset-password/{token}', ResetPassword::class)
     ->middleware('guest')
-    ->name('passwords.reset');
+    ->name('password.resettoken');
 
 Route::get('/admin/verify-user/{user}', function (Request $request, User $user) {
 
