@@ -7,10 +7,11 @@ use App\Notifications\ResetPasswordNotif;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Tests\TestCase;
-
+use Illuminate\Foundation\Testing\RefreshDatabase;
 class CustomPasswordResetTest extends TestCase
 {
-    public function test_admin_receives_reset_password_notification()
+      use RefreshDatabase; 
+        public function test_admin_receives_reset_password_notification()
     {
         Notification::fake();
 
