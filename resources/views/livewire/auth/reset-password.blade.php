@@ -7,6 +7,7 @@
     <form wire:submit="resetPassword" class="flex flex-col gap-6">
         <!-- Email Address -->
         <flux:input
+        @readonly(true)
             wire:model="email"
             :label="__('Email')"
             type="email"

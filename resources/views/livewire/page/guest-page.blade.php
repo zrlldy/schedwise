@@ -1,5 +1,5 @@
 <div>
-    {{-- <x-layouts.auth.simple> --}}
-    @livewire('auth.login')
-    {{-- </x-layouts.auth.simple> --}}
+  
+gonna do something here
+
 </div>

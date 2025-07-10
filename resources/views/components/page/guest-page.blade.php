@@ -1,4 +1,0 @@
-<div wire:poll>
-
-
-</div>
