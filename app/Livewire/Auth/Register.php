@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Notification;
 #[Layout('components.layouts.auth')]
 class Register extends Component
 {
+    public string $something;
     public string $name = '';
 
     public string $email = '';
