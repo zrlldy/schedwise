@@ -1,6 +1,8 @@
 <?php
 
 use App\Livewire\Auth\ResetPassword;
+use App\Livewire\Page\Dashboard;
+use App\Livewire\Page\Faculty;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -32,9 +34,19 @@ Route::get('/', function () {
 })->name('home');
 
 
-Route::view('dashboard', 'dashboard')
+// Route::view('dashboard', Dashboard::class)
+//     ->middleware(['auth', 'verified'])
+//     ->name('dashboard');
+
+route::get('dashboard', Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+route::get('faculty', Faculty::class)
+    ->middleware(['auth', 'verified'])
+    ->name('faculty');
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
