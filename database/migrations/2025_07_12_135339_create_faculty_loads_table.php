@@ -16,7 +16,7 @@ return new class extends Migration
              $table->foreignId('faculty_id')->constrained()->onDelete('cascade');
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->foreignId('academic_term_id')->constrained()->onDelete('cascade');
-            $table->integer('units');
+            // $table->integer('units');
             $table->timestamps();
         });
     }

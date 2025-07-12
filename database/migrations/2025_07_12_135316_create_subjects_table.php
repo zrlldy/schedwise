@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+
+            $table->string('code')->unique();
+            $table->integer('units')->default(3); // Default units can be set as needed
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

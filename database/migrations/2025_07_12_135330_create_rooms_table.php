@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('room_number');
             $table->string('building')->nullable();
+            $table->enum('status', ['available', 'occupied', 'TBA'])->default('available');
             $table->timestamps();
         });
     }
