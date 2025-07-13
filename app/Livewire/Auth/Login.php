@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Services\AttemptLimiter;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -12,43 +13,51 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-#[Layout('components.layouts.auth')]
+#[Layout("components.layouts.auth")]
 class Login extends Component
 {
-    #[Validate('required|string|email')]
-    public string $email = '';
+    #[Validate("required|string|email")]
+    public string $email = "";
 
-    #[Validate('required|string')]
-    public string $password = '';
+    #[Validate("required|string")]
+    public string $password = "";
 
     public bool $remember = false;
 
-
-
-    /** 
+    /**
      * Handle an incoming authentication request.
      */
-    public function login(): void
+    public function login(AttemptLimiter $limiter): void
     {
-
         $remaining = RateLimiter::remaining($this->throttleKey(), 5);
         $this->validate();
 
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (
+            !Auth::attempt(
+                ["email" => $this->email, "password" => $this->password],
+                $this->remember
+            )
+        ) {
             RateLimiter::hit($this->throttleKey());
 
-          throw ValidationException::withMessages([
-    'email' => __('auth.failed') . '
-    ' . __('auth.attempts', ['attempts' => $remaining - 1]),
-]);
-        } 
+            throw ValidationException::withMessages([
+                "email" =>
+                    __("auth.failed") .
+                    '
+    ' .
+                    __("auth.attempts", ["attempts" => $remaining -1]),
+            ]);
+        }
 
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(
+            default: route("dashboard", absolute: false),
+            navigate: true
+        );
     }
 
     /**
@@ -56,7 +65,7 @@ class Login extends Component
      */
     protected function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -65,12 +74,10 @@ class Login extends Component
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => __('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
+            "email" => __("auth.throttle", [
+                "seconds" => $seconds
             ]),
         ]);
-
     }
 
     /**

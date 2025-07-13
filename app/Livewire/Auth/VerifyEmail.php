@@ -4,6 +4,8 @@ namespace App\Livewire\Auth;
 
 use App\Livewire\Actions\Logout;
 use App\Notifications\AdminEmailVerification;
+use App\Services\AttemptLimiter;
+
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -17,13 +19,13 @@ use Illuminate\Validation\ValidationException;
 class VerifyEmail extends Component
 {
     protected $max = 3;
-
+    protected $message = "auth.verification-link-throttle";
     /**
      * Send an email verification notification to the user.
      */
-    public function sendVerification(): void
+    public function sendVerification(AttemptLimiter $limiter): void
     {
-        $this->mailSendLimiter();
+        // $this->mailSendLimiter();
 
         if (Auth::user()->hasVerifiedEmail()) {
             $this->redirectIntended(
@@ -33,34 +35,34 @@ class VerifyEmail extends Component
             return;
         }
 
+        $limiter->checkAttempts($this->max, 60, $this->message);
         Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
             new AdminEmailVerification(Auth::user())
         );
-        RateLimiter::hit($this->limiterKey(), 60);
 
         Session::flash("status", "verification-link-sent");
     }
 
-    protected function mailSendLimiter()
-    {
-        if (!RateLimiter::tooManyAttempts($this->limiterKey(), $this->max)) {
-            return;
-        }
+    // protected function mailSendLimiter()
+    // {
+    //     if (!RateLimiter::tooManyAttempts($this->limiterKey(), $this->max)) {
+    //         return;
+    //     }
 
-        event(new Lockout(request()));
-        $seconds = RateLimiter::availableIn($this->limiterKey());
-        throw ValidationException::withMessages([
-            "email" => __("auth.verification-link-throttle", [
-                "seconds" => $seconds,
-                "minutes" => ceil($seconds / 60),
-            ]),
-        ]);
-    }
+    //     event(new Lockout(request()));
+    //     $seconds = RateLimiter::availableIn($this->limiterKey());
+    //     throw ValidationException::withMessages([
+    //         "email" => __("auth.verification-link-throttle", [
+    //             "seconds" => $seconds,
+    //             "minutes" => ceil($seconds / 60),
+    //         ]),
+    //     ]);
+    // }
 
-    protected function limiterKey()
-    {
-        return request()->ip();
-    }
+    // protected function limiterKey()
+    // {
+    //     return request()->ip();
+    // }
 
     /**
      * Log the current user out of the application.

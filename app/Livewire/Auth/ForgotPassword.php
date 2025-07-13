@@ -22,6 +22,12 @@ class ForgotPassword extends Component
      */
 
     // gonna something here later
+    public int $remaining = 0;
+
+    public function mount(AttemptLimiter $limiter)
+    {
+        $this->remaining = $limiter->remainingAttempts($this->max);
+    }
     public function sendPasswordResetLink(): void
     {
         $this->isNotLimitPasswordResestLink();
