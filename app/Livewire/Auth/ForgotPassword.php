@@ -12,25 +12,30 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Validation\ValidationException;
 
-#[Layout('components.layouts.auth')]
+#[Layout("components.layouts.auth")]
 class ForgotPassword extends Component
 {
-    public string $email = '';
+    public string $email = "";
 
     /**
      * Send a password reset link to the admin for the provided user email.
      */
+
+    // gonna something here later
     public function sendPasswordResetLink(): void
     {
         $this->isNotLimitPasswordResestLink();
         $this->validate([
-            'email' => ['required', 'string', 'email'],
+            "email" => ["required", "string", "email"],
         ]);
 
-        $user = User::where('email', $this->email)->first();
+        $user = User::where("email", $this->email)->first();
 
         if (!$user) {
-            $this->addError('email', 'We can\'t find a user with that email address.');
+            $this->addError(
+                "email",
+                'We can\'t find a user with that email address.'
+            );
             return;
         }
 
@@ -38,40 +43,35 @@ class ForgotPassword extends Component
         $token = Password::createToken($user);
 
         // Send email to the admin instead of the user
-         Notification::route('mail', 'jeroldnoynay123@gmail.com')
-        ->notify(new ResetPasswordNotif($user, $token));
-        
-            RateLimiter::hit($this->keyLimiter(), 60);
+        Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
+            new ResetPasswordNotif($user, $token)
+        );
 
+        RateLimiter::hit($this->keyLimiter(), 60);
 
-        session()->flash('status', __('A reset link has been sent to the admin for approval.'));
+        session()->flash(
+            "status",
+            __("A reset link has been sent to the admin for approval.")
+        );
     }
 
-
-    protected function isNotLimitPasswordResestLink(){
-
-        if(!RateLimiter::tooManyAttempts($this->keyLimiter(),5)){
+    protected function isNotLimitPasswordResestLink()
+    {
+        if (!RateLimiter::tooManyAttempts($this->keyLimiter(), 5)) {
             return;
         }
 
         $seconds = RateLimiter::availableIn($this->keyLimiter());
-       throw ValidationException::withMessages([
-        'email' => __('auth.verification-link-throttle', [
-            'seconds' => $seconds,
-            'minutes' => ceil($seconds / 60),
-        ]),
-
-    ]);
-
-
-
-
-
+        throw ValidationException::withMessages([
+            "email" => __("auth.verification-link-throttle", [
+                "seconds" => $seconds,
+                "minutes" => ceil($seconds / 60),
+            ]),
+        ]);
     }
 
-
-
-    protected function keyLimiter(){
+    protected function keyLimiter()
+    {
         return request()->ip();
     }
 }

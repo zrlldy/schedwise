@@ -13,10 +13,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
-#[Layout('components.layouts.auth')]
+#[Layout("components.layouts.auth")]
 class VerifyEmail extends Component
-
-
 {
     protected $max = 3;
 
@@ -25,48 +23,44 @@ class VerifyEmail extends Component
      */
     public function sendVerification(): void
     {
-         $this->mailSendLimiter();
+        $this->mailSendLimiter();
 
-    if (Auth::user()->hasVerifiedEmail()) {
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
-        return;
-    }
+        if (Auth::user()->hasVerifiedEmail()) {
+            $this->redirectIntended(
+                default: route("dashboard", absolute: false),
+                navigate: true
+            );
+            return;
+        }
 
-
-    Notification::route('mail', 'jeroldnoynay123@gmail.com')
-    ->notify(new AdminEmailVerification(Auth::user()));
+        Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
+            new AdminEmailVerification(Auth::user())
+        );
         RateLimiter::hit($this->limiterKey(), 60);
-       
-        Session::flash('status', 'verification-link-sent');
+
+        Session::flash("status", "verification-link-sent");
     }
 
-  protected function mailSendLimiter(){
-    if(!RateLimiter::tooManyAttempts($this->limiterKey(),$this->max)){
-        return;
-    }
+    protected function mailSendLimiter()
+    {
+        if (!RateLimiter::tooManyAttempts($this->limiterKey(), $this->max)) {
+            return;
+        }
 
-    event (new Lockout(
-        request()
-    ));
-            $seconds = RateLimiter::availableIn($this->limiterKey());
+        event(new Lockout(request()));
+        $seconds = RateLimiter::availableIn($this->limiterKey());
         throw ValidationException::withMessages([
-        'email' => __('auth.verification-link-throttle', [
-            'seconds' => $seconds,
-            'minutes' => ceil($seconds / 60),
-        ]),
-    ]);
-
+            "email" => __("auth.verification-link-throttle", [
+                "seconds" => $seconds,
+                "minutes" => ceil($seconds / 60),
+            ]),
+        ]);
     }
 
-
-    protected function limiterKey(){
-    return request()->ip();
+    protected function limiterKey()
+    {
+        return request()->ip();
     }
-
-
-
-
-
 
     /**
      * Log the current user out of the application.
@@ -75,6 +69,6 @@ class VerifyEmail extends Component
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect("/", navigate: true);
     }
 }
