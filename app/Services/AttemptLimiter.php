@@ -6,7 +6,7 @@ use Illuminate\Validation\ValidationException;
 
 class AttemptLimiter
 {
-    public function checkAttempts(int $maxAttempts, $message, $message2 , $seconds)
+    public function checkAttempts(int $maxAttempts, $message,)
     {
         $key = $this->limiterKey();
         if (!RateLimiter::tooManyAttempts($key, $maxAttempts)) {
@@ -18,10 +18,12 @@ class AttemptLimiter
         $seconds = RateLimiter::availableIn($key);
 
         throw ValidationException::withMessages([
-            "email" => __("auth.verification-link-throttle", [
+            "email" => __($message, [
                 "seconds" => $seconds,
             ]),
         ]);
+
+        // $this->message($key, $message, $seconds);
 
         $attemptKey = $key . ":attempts";
         $attempts = RateLimiter::attempts($attemptKey);
@@ -33,21 +35,13 @@ class AttemptLimiter
         }
 
     }
-
     public function clear(){
         RateLimiter::clear($this->limiterKey());
         RateLimiter::clear($this->limiterKey() . ":attempts"); 
     }
 
-
-    public function hit(int $seconds)
-    {
-        RateLimiter::hit($this->limiterKey(), $seconds);
-    }
-
     
-
-    protected function limiterKey()
+    public function limiterKey()
     {
         return request()->ip();
     }

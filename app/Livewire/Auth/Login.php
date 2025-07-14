@@ -23,16 +23,23 @@ class Login extends Component
     public string $password = "";
 
     public bool $remember = false;
+    protected int $maxAttempts = 5;
+    protected $key;
 
     /**
      * Handle an incoming authentication request.
      */
     public function login(AttemptLimiter $limiter): void
     {
-        $remaining = RateLimiter::remaining($this->throttleKey(), 5);
+
+           $this->key = $limiter->limiterKey();
+        $remaining = RateLimiter::remaining($this->key, $this->maxAttempts);
         $this->validate();
 
-        $this->ensureIsNotRateLimited();
+        // $this->ensureIsNotRateLimited();
+
+        $limiter->checkAttempts($this->maxAttempts,
+       "auth.throttle" );
 
         if (
             !Auth::attempt(
@@ -40,7 +47,7 @@ class Login extends Component
                 $this->remember
             )
         ) {
-            RateLimiter::hit($this->throttleKey());
+            RateLimiter::hit($this->key);
 
             throw ValidationException::withMessages([
                 "email" =>
@@ -51,7 +58,7 @@ class Login extends Component
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        // RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
         $this->redirectIntended(
@@ -63,29 +70,29 @@ class Login extends Component
     /**
      * Ensure the authentication request is not rate limited.
      */
-    protected function ensureIsNotRateLimited(): void
-    {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-            return;
-        }
+    // protected function ensureIsNotRateLimited(): void
+    // {
+    //     if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+    //         return;
+    //     }
 
-        event(new Lockout(request()));
+    //     event(new Lockout(request()));
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+    //     $seconds = RateLimiter::availableIn($this->throttleKey());
 
-        throw ValidationException::withMessages([
-            "email" => __("auth.throttle", [
-                "seconds" => $seconds
-            ]),
-        ]);
-    }
+    //     throw ValidationException::withMessages([
+    //         "email" => __("auth.throttle", [
+    //             "seconds" => $seconds
+    //         ]),
+    //     ]);
+    // }
 
-    /**
-     * Get the authentication rate limiting throttle key.
-     */
-    protected function throttleKey(): string
-    {
-        return request()->ip();
-        // return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
-    }
+    // /**
+    //  * Get the authentication rate limiting throttle key.
+    //  */
+    // protected function throttleKey(): string
+    // {
+    //     return request()->ip();
+    //     // return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+    // }
 }
