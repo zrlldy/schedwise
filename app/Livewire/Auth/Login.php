@@ -25,74 +25,36 @@ class Login extends Component
     public bool $remember = false;
     protected int $maxAttempts = 5;
     protected $key;
+    protected int $seconds = 10;
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function login(AttemptLimiter $limiter): void
     {
 
-           $this->key = $limiter->limiterKey();
-        $remaining = RateLimiter::remaining($this->key, $this->maxAttempts);
         $this->validate();
+        $this->key = $limiter->temporalKey(); // for reference, not used directly
 
-        // $this->ensureIsNotRateLimited();
 
-        $limiter->checkAttempts($this->maxAttempts,
-       "auth.throttle" );
+         $limiter->checkAttempts($this->maxAttempts, 'auth.throttle', $this->seconds);
+        // 1. Check auth
+        if (!Auth::attempt(
+            ['email' => $this->email, 'password' => $this->password],
+            $this->remember
+        )) {
 
-        if (
-            !Auth::attempt(
-                ["email" => $this->email, "password" => $this->password],
-                $this->remember
-            )
-        ) {
-            RateLimiter::hit($this->key);
+            $remaining = $this->maxAttempts - RateLimiter::attempts($this->key);
 
             throw ValidationException::withMessages([
-                "email" =>
-                    __("auth.failed") .
-                    '
-    ' .
-                    __("auth.attempts", ["attempts" => $remaining -1]),
+                'email' => __('auth.failed') . ' ' .
+                           __('auth.attempts', ['attempts' => $remaining]),
             ]);
+
+
         }
-
-        // RateLimiter::clear($this->throttleKey());
+        // 4. Clear lockout and attempts on success
+        $limiter->clear();
         Session::regenerate();
-
-        $this->redirectIntended(
-            default: route("dashboard", absolute: false),
-            navigate: true
-        );
+        $this->redirectIntended(route('dashboard'), navigate: true);
     }
 
-    /**
-     * Ensure the authentication request is not rate limited.
-     */
-    // protected function ensureIsNotRateLimited(): void
-    // {
-    //     if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-    //         return;
-    //     }
 
-    //     event(new Lockout(request()));
-
-    //     $seconds = RateLimiter::availableIn($this->throttleKey());
-
-    //     throw ValidationException::withMessages([
-    //         "email" => __("auth.throttle", [
-    //             "seconds" => $seconds
-    //         ]),
-    //     ]);
-    // }
-
-    // /**
-    //  * Get the authentication rate limiting throttle key.
-    //  */
-    // protected function throttleKey(): string
-    // {
-    //     return request()->ip();
-    //     // return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
-    // }
 }

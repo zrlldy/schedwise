@@ -6,43 +6,55 @@ use Illuminate\Validation\ValidationException;
 
 class AttemptLimiter
 {
-    public function checkAttempts(int $maxAttempts, $message,)
+    public function checkAttempts(int $maxAttempts, string $message, int $maxtime): void
     {
-        $key = $this->limiterKey();
-        if (!RateLimiter::tooManyAttempts($key, $maxAttempts)) {
-            return;
-        }
+            $clonekey = $this->temporalKey();
+            $cooldownKey = $this->limiterKey();
+            $cooldownCounterKey = "cooldown_count:" . $cooldownKey;
 
-        event(new Lockout(request()));
+             // 🚫 Check if currently in cooldown
+             if (RateLimiter::tooManyAttempts($cooldownKey, 1)) {
+                 event(new Lockout(request()));
+                 $seconds = RateLimiter::availableIn($cooldownKey);
+                 throw ValidationException::withMessages([
+                     'email' => __($message, ['seconds' => $seconds]),
+                 ]);
+             }
 
-        $seconds = RateLimiter::availableIn($key);
 
-        throw ValidationException::withMessages([
-            "email" => __($message, [
-                "seconds" => $seconds,
-            ]),
-        ]);
+             $attempts = RateLimiter::attempts($clonekey) ?? 0;
+             RateLimiter::hit($clonekey);
+             if ($attempts + 1 >= $maxAttempts) {
 
-        // $this->message($key, $message, $seconds);
+                 $cooldownCycle = RateLimiter::attempts($cooldownCounterKey);
 
-        $attemptKey = $key . ":attempts";
-        $attempts = RateLimiter::attempts($attemptKey);
-        RateLimiter::hit($attemptKey, $seconds);
-        if($attempts+1 >= $maxAttempts) {
-            RateLimiter::hit($key, $seconds);
-            RateLimiter::clear($attemptKey);
 
-        }
+                 $cooldownDuration = min($maxtime * (2 ** $cooldownCycle), 3600);
 
-    }
-    public function clear(){
+
+                 RateLimiter::hit($cooldownKey, $cooldownDuration);
+                 RateLimiter::clear($clonekey);
+                 RateLimiter::hit($cooldownCounterKey);
+
+                 $seconds = RateLimiter::availableIn($cooldownKey);
+                 throw ValidationException::withMessages([
+                     'email' => __($message, ['seconds' => $seconds]),
+                 ]);
+             }
+         }
+    public function clear(): void
+    {
         RateLimiter::clear($this->limiterKey());
-        RateLimiter::clear($this->limiterKey() . ":attempts"); 
+        RateLimiter::clear($this->temporalKey());
     }
 
-    
-    public function limiterKey()
+    public function limiterKey(): string
     {
-        return request()->ip();
+        return request()->ip(); // or use email|ip if needed
+    }
+
+    public function temporalKey(): string
+    {
+        return $this->limiterKey() . ':attempts';
     }
 }
