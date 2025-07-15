@@ -25,12 +25,21 @@ class VerifyEmail extends Component
     /**
      * Send an email verification notification to the user.
      */
+
+        public function mount()
+        {
+                if(auth()->user()->hasVerifiedEmail()){
+                    return redirect('/dashboard');
+                }
+        }
+
     public function sendVerification(AttemptLimiter $limiter): void
     {
+        $email = Auth::user()->email;
         // $this->mailSendLimiter();
-           $limiter->setEmail($this->email);
-           $limiter->setKey('forgot-password');
-          $key = $limiter->temporalKey(); 
+           $limiter->setEmail($email);
+           $limiter->setKey('VerifyEmail');
+          $key = $limiter->temporalKey();
             $limiter->checkAttempts($this->max, $this->message, $this->seconds);
         if (Auth::user()->hasVerifiedEmail()) {
             $this->redirectIntended(
@@ -40,15 +49,15 @@ class VerifyEmail extends Component
             return;
         }
 
-      
+
         Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
             new AdminEmailVerification(Auth::user())
         );
 
         Session::flash("status", "verification-link-sent");
- 
+
     }
-    
+
     public function logout(Logout $logout): void
     {
         $logout();

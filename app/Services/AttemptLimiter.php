@@ -21,6 +21,9 @@ class AttemptLimiter
         $this->email = strtolower(trim($email));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function checkAttempts(int $maxAttempts, string $message, int $maxtime): void
     {
         $clonekey = $this->temporalKey();
@@ -36,7 +39,7 @@ class AttemptLimiter
             ]);
         }
 
-        $attempts = RateLimiter::attempts($clonekey) ?? 0;
+        $attempts = 0 ?? RateLimiter::attempts($clonekey);
         RateLimiter::hit($clonekey,$maxtime);
 
         if ($attempts +1   >= $maxAttempts) {
@@ -64,7 +67,7 @@ class AttemptLimiter
     {
         $ip = request()->ip();
         $email = $this->email ?: 'guest';
-       return "{$this->prefix}:{$ip}_and_{$email}";
+       return "$this->prefix:{$ip}_and_$email";
     }
 
     public function temporalKey(): string
