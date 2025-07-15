@@ -18,7 +18,7 @@ class AttemptLimiter
 
     public function setEmail(string $email): void
     {
-        $this->email = $email;
+        $this->email = strtolower(trim($email));
     }
 
     public function checkAttempts(int $maxAttempts, string $message, int $maxtime): void
@@ -27,7 +27,7 @@ class AttemptLimiter
         $cooldownKey = $this->limiterKey();
         $cooldownCounterKey = "cooldown_count:" . $cooldownKey;
 
-        // 🚫 Check if currently in cooldown
+
         if (RateLimiter::tooManyAttempts($cooldownKey, 1)) {
             event(new Lockout(request()));
             $seconds = RateLimiter::availableIn($cooldownKey);
@@ -37,7 +37,7 @@ class AttemptLimiter
         }
 
         $attempts = RateLimiter::attempts($clonekey) ?? 0;
-        RateLimiter::hit($clonekey);
+        RateLimiter::hit($clonekey,$maxtime);
 
         if ($attempts +1   >= $maxAttempts) {
             $cooldownCycle = RateLimiter::attempts($cooldownCounterKey);

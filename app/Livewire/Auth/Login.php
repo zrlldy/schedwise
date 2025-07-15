@@ -32,7 +32,7 @@ class Login extends Component
 
         $this->validate();
          $limiter->setKey('login'); // Optional, good for separating contexts
-    $limiter->setEmail($this->email); // 
+         $limiter->setEmail($this->email); //
         $this->key = $limiter->temporalKey(); // for reference, not used directly
 
 
