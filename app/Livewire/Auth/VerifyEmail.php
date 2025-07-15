@@ -20,6 +20,8 @@ class VerifyEmail extends Component
 {
     protected $max = 3;
     protected $message = "auth.verification-link-throttle";
+    protected int $seconds = 60;
+
     /**
      * Send an email verification notification to the user.
      */
@@ -27,6 +29,7 @@ class VerifyEmail extends Component
     {
         // $this->mailSendLimiter();
 
+          $key = $limiter->temporalKey(); 
         if (Auth::user()->hasVerifiedEmail()) {
             $this->redirectIntended(
                 default: route("dashboard", absolute: false),
@@ -35,38 +38,15 @@ class VerifyEmail extends Component
             return;
         }
 
-        $limiter->checkAttempts($this->max, 60, $this->message);
+        $limiter->checkAttempts($this->max, $this->message, $this->seconds);
         Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
             new AdminEmailVerification(Auth::user())
         );
 
         Session::flash("status", "verification-link-sent");
+        $limiter->clear();
     }
-
-    // protected function mailSendLimiter()
-    // {
-    //     if (!RateLimiter::tooManyAttempts($this->limiterKey(), $this->max)) {
-    //         return;
-    //     }
-
-    //     event(new Lockout(request()));
-    //     $seconds = RateLimiter::availableIn($this->limiterKey());
-    //     throw ValidationException::withMessages([
-    //         "email" => __("auth.verification-link-throttle", [
-    //             "seconds" => $seconds,
-    //             "minutes" => ceil($seconds / 60),
-    //         ]),
-    //     ]);
-    // }
-
-    // protected function limiterKey()
-    // {
-    //     return request()->ip();
-    // }
-
-    /**
-     * Log the current user out of the application.
-     */
+    
     public function logout(Logout $logout): void
     {
         $logout();
