@@ -19,7 +19,7 @@ use Illuminate\Validation\ValidationException;
 class VerifyEmail extends Component
 {
     protected $max = 3;
-    protected $message = "auth.verification-link-throttle";
+    protected $message = "auth.throttle";
     protected int $seconds = 60;
 
     /**
@@ -28,8 +28,10 @@ class VerifyEmail extends Component
     public function sendVerification(AttemptLimiter $limiter): void
     {
         // $this->mailSendLimiter();
-
+           $limiter->setEmail($this->email);
+           $limiter->setKey('forgot-password');
           $key = $limiter->temporalKey(); 
+            $limiter->checkAttempts($this->max, $this->message, $this->seconds);
         if (Auth::user()->hasVerifiedEmail()) {
             $this->redirectIntended(
                 default: route("dashboard", absolute: false),
@@ -38,13 +40,13 @@ class VerifyEmail extends Component
             return;
         }
 
-        $limiter->checkAttempts($this->max, $this->message, $this->seconds);
+      
         Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
             new AdminEmailVerification(Auth::user())
         );
 
         Session::flash("status", "verification-link-sent");
-        $limiter->clear();
+ 
     }
     
     public function logout(Logout $logout): void

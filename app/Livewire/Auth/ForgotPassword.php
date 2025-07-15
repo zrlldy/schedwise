@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\Auth;
+use App\Services\AttemptLimiter;
 use Illuminate\Support\Facades\Notification;
 use App\Mail\AdminResetPasswordLink;
 use App\Models\User;
@@ -23,61 +24,49 @@ class ForgotPassword extends Component
 
     // gonna something here later
     public int $remaining = 0;
+    protected $key;
+    protected int $maxAttempts = 2;
+    protected int $seconds = 20;
+   
+public function sendPasswordResetLink(AttemptLimiter $limiter): void
+{
+    $this->validate([
+        "email" => ["required", "string", "email"],
+    ]);
 
-    public function mount(AttemptLimiter $limiter)
-    {
-        $this->remaining = $limiter->remainingAttempts($this->max);
-    }
-    public function sendPasswordResetLink(): void
-    {
-        $this->isNotLimitPasswordResestLink();
-        $this->validate([
-            "email" => ["required", "string", "email"],
-        ]);
+    // Set limiter key based on email + IP for uniqueness
+    $limiter->temporalKey('forgot-password:' . request()->ip() . '|' . $this->email);
+    $this->key = $limiter->temporalKey();
 
-        $user = User::where("email", $this->email)->first();
+    // Check if user exists first
+    $user = User::where("email", $this->email)->first();
 
-        if (!$user) {
-            $this->addError(
-                "email",
-                'We can\'t find a user with that email address.'
-            );
-            return;
-        }
-
-        // Generate reset token for the user
-        $token = Password::createToken($user);
-
-        // Send email to the admin instead of the user
-        Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
-            new ResetPasswordNotif($user, $token)
+    if (!$user) {
+        // Still allow limiter to count it
+       
+        $limiter->checkAttempts($this->maxAttempts, 'auth.throttle', $this->seconds);
+        $this->addError(
+            "email",
+            'We can\'t find a user with that email address.'
         );
-
-        RateLimiter::hit($this->keyLimiter(), 60);
-
-        session()->flash(
-            "status",
-            __("A reset link has been sent to the admin for approval.")
-        );
+        return;
     }
 
-    protected function isNotLimitPasswordResestLink()
-    {
-        if (!RateLimiter::tooManyAttempts($this->keyLimiter(), 5)) {
-            return;
-        }
+    // At this point, user exists → Check limiter
+    $limiter->checkAttempts($this->maxAttempts, 'auth.throttle', $this->seconds);
 
-        $seconds = RateLimiter::availableIn($this->keyLimiter());
-        throw ValidationException::withMessages([
-            "email" => __("auth.verification-link-throttle", [
-                "seconds" => $seconds,
-                "minutes" => ceil($seconds / 60),
-            ]),
-        ]);
-    }
+    // Send token
+    $token = Password::createToken($user);
+    Notification::route("mail", "jeroldnoynay123@gmail.com")->notify(
+        new ResetPasswordNotif($user, $token)
+    );
 
-    protected function keyLimiter()
-    {
-        return request()->ip();
-    }
+    session()->flash(
+        "status",
+        __("A reset link has been sent to the admin for approval.")
+    );
+
+    // ✅ Clear only on success
+  
+}
 }
