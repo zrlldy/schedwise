@@ -2,11 +2,14 @@
 
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Page\Dashboard;
+use App\Livewire\Page\Department;
+use App\Livewire\Page\Subject;
 use App\Livewire\Page\Faculty;
 use App\Livewire\Page\Schedule;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +52,14 @@ route::get('dashboard', Dashboard::class)
 route::get('faculty', Faculty::class)
     ->middleware(['auth', 'verified'])
     ->name('faculty');
+
+route::get('department', Department::class)
+    ->middleware(['auth', 'verified'])
+    ->name('department');
+
+route::get('subject', Subject::class)
+    ->middleware(['auth', 'verified'])
+    ->name('subject');
 
 route::get('schedule', Schedule::class)->middleware(['auth', 'verified'])->name('schedule');
 

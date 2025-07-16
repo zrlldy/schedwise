@@ -19,6 +19,13 @@
                 <flux:navlist.item icon="home" :href="route('faculty')" :current="request()->routeIs('faculty')"
                                    wire:navigate>{{ __('Faculty') }}</flux:navlist.item>
 
+                <flux:navlist.group expandable heading="Department/Subject" class="hidden lg:grid">
+                    <flux:navlist.item icon="home" :href="route('department')" :current="request()->routeIs('department')"
+                                       wire:navigate>{{ __('Department') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="route('subject')" :current="request()->routeIs('subject')"
+                                       wire:navigate>{{ __('Subject') }}</flux:navlist.item>
+                </flux:navlist.group>
+
                 <flux:navlist.item icon="home" :href="route('schedule')" :current="request()->routeIs('schedule')"
                                    wire:navigate>{{ __('Schedule') }}</flux:navlist.item>
             </div>
