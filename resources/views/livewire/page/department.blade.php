@@ -1,7 +1,7 @@
 <div>
     <div class="flex flex-col justify-center items-center gap-2">
 
-        <div class="bg-orange-200 rounded-md p-4 text-center font-bold max-w-[70%] w-full mb-5">
+        <div class="bg-orange-200 rounded-lg p-4 text-center font-bold max-w-[70%] w-full mb-5">
 
             <header class="text-2xl font-bold">Department</header>
 
@@ -87,7 +87,7 @@
     <flux:modal name="add-deparment" class="md:w-106">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg" class="text-center">Add Department</flux:heading>
+                <flux:heading size="lg" class="text-center text-2xl font-bold">Add Department</flux:heading>
                 <flux:text class="mt-2">Add a subject to a specific course </flux:text>
             </div>
             <flux:input label="Subject" placeholder="Subject Name" />
