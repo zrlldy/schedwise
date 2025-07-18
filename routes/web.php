@@ -5,6 +5,7 @@ use App\Livewire\Page\Dashboard;
 use App\Livewire\Page\Department;
 use App\Livewire\Page\Subject;
 use App\Livewire\Page\Faculty;
+use App\Livewire\Page\Room;
 use App\Livewire\Page\Schedule;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
@@ -60,6 +61,10 @@ route::get('department', Department::class)
 route::get('subject', Subject::class)
     ->middleware(['auth', 'verified'])
     ->name('subject');
+
+route::get('room', Room::class)
+    ->middleware(['auth', 'verified'])
+    ->name('room');
 
 route::get('schedule', Schedule::class)->middleware(['auth', 'verified'])->name('schedule');
 

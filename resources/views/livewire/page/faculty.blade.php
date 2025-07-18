@@ -1,15 +1,15 @@
 <div>
     <div class="flex flex-col justify-center items-center gap-2">
 
-        <div class="bg-orange-200 rounded-md p-4 text-center font-bold w-[60%] mb-5">
+        <div class="bg-orange-200 rounded-md p-4 text-center font-bold max-w-[60%] w-full mb-5">
             <nav>
                 <p class="text-2xl"> Schedwise</p>
             </nav>
         </div>
 
 
-        <div class="flex flex-row justify-between  w-full mt-5  gap-2 ">
-            <div class="ml-4  flex  gap-4">
+        <div class="flex flex-row justify-between w-full mt-5 gap-2 ">
+            <div class="ml-4 flex gap-4">
                 <flux:input as="input" placeholder="Search..." icon="magnifying-glass" kbd="⌘K"  />
                 <flux:dropdown>
                     <flux:button icon:trailing="chevron-down">Department</flux:button>
@@ -19,7 +19,7 @@
                         <flux:menu.item icon="document-duplicate" kbd="⌘D">BSIE</flux:menu.item>
                         <flux:menu.item icon="trash" variant="danger" kbd="⌘⌫">BEED</flux:menu.item>
                         <flux:menu.item icon="trash" variant="danger" kbd="⌘⌫">BTLED</flux:menu.item>
-                    </
+                1z
                     </flux:menu>
                 </flux:dropdown>
             </div>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class=" mt-5 rounded p-2 w-full h-vh border shadow-sm">
+        <div class=" mt-5 rounded p-2 w-full  h-dvh border shadow-sm">
             <div class="overflow-x-auto">
                 <table class="table">
                     <!-- head -->
@@ -76,6 +76,8 @@
                 </table>
             </div>
         </div>
+
+
     </div>
 
 

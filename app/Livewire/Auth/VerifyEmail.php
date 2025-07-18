@@ -28,7 +28,8 @@ class VerifyEmail extends Component
 
         public function mount()
         {
-                if(auth()->user()->hasVerifiedEmail()){
+
+                if(Auth::user()->hasVerifiedEmail()){
                     return redirect('/dashboard');
                 }
         }
@@ -47,6 +48,7 @@ class VerifyEmail extends Component
                 navigate: true
             );
             return;
+            
         }
 
 

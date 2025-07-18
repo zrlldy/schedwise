@@ -3,7 +3,6 @@
 namespace App\Livewire\Auth;
 
 use App\Services\AttemptLimiter;
-use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;

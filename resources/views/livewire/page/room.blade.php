@@ -3,7 +3,7 @@
 
         <div class="bg-orange-200 rounded-md p-4 text-center font-bold max-w-[70%] w-full mb-5">
 
-            <header class="text-2xl font-bold">Department</header>
+            <header class="text-2xl font-bold"> Schedwise</header>
 
         </div>
 
@@ -21,7 +21,7 @@
                         <flux:menu.item icon="document-duplicate" kbd="⌘D">BSIE</flux:menu.item>
                         <flux:menu.item icon="trash" variant="danger" kbd="⌘⌫">BEED</flux:menu.item>
                         <flux:menu.item icon="trash" variant="danger" kbd="⌘⌫">BTLED</flux:menu.item>
-
+                        1z
                     </flux:menu>
                 </flux:dropdown>
             </div>
@@ -30,8 +30,8 @@
 
             <div class="mr-10">
 
-                <flux:modal.trigger name="add-deparment">
-                    <flux:button variant="primary" color="teal">Add Department</flux:button>
+                <flux:modal.trigger name="add-faculty">
+                    <flux:button variant="primary" color="teal">Add Faculty</flux:button>
                 </flux:modal.trigger>
 
 
@@ -41,7 +41,7 @@
         </div>
 
         <div class=" mt-5 rounded p-2 w-full  h-dvh border shadow-sm">
-
+            <div class="bg-red-300 rounded-sm text-center p-2 font-bold text-2xl"> Room for Department: </div>
             <div class="overflow-x-auto">
                 <table class="table">
                     <!-- head -->
@@ -84,52 +84,15 @@
     </div>
 
 
-    <flux:modal name="add-deparment" class="md:w-106">
+    <flux:modal name="add-faculty" class="md:w-96">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg" class="text-center">Add Department</flux:heading>
-                <flux:text class="mt-2">Add a subject to a specific course </flux:text>
+                <flux:heading size="lg">Update profile</flux:heading>
+                <flux:text class="mt-2">Make changes to your personal details.</flux:text>
             </div>
-            <flux:input label="Subject" placeholder="Subject Name" />
-            <flux:input label="Subject Code" placeholder="Subject Code" />
-            <div class="flex  flex-row gap-2">
-                <div>
-                    <flux:dropdown>
-                        <flux:button icon:trailing="chevron-down">Department</flux:button>
-                        <flux:menu keep-open>
-                            <flux:menu.checkbox wire:model="read" checked>BSIT</flux:menu.checkbox>
-                            <flux:menu.checkbox wire:model="write">BEED</flux:menu.checkbox>
-                            <flux:menu.checkbox wire:model="delete">BTLED</flux:menu.checkbox>
-                            <flux:menu.checkbox wire:model="delete">BEED</flux:menu.checkbox>
-                        </flux:menu>
-                    </flux:dropdown>
-                </div>
-                <div>
-
-                    <flux:select size="md" placeholder="Course Year">
-                        <flux:select.option>1st Year</flux:select.option>
-                        <flux:select.option>2nd Year</flux:select.option>
-                        <flux:select.option>3rd Year</flux:select.option>
-                        <flux:select.option>4th Year</flux:select.option>
-
-                    </flux:select>
-                </div>
-
-                <div>
-                    <flux:dropdown>
-                        <flux:button icon:trailing="chevron-down">Term</flux:button>
-                        <flux:menu keep-open>
-                            <flux:menu.checkbox wire:model="read" checked>1st Semester</flux:menu.checkbox>
-                            <flux:menu.checkbox wire:model="write">2nd Semester</flux:menu.checkbox>
-
-                        </flux:menu>
-                    </flux:dropdown>
-                </div>
-
-            </div>
-
-
-            <div class="flex item-center text-center justify-center">
+            <flux:input label="Name" placeholder="Your name" />
+            <flux:input label="Date of birth" type="date" />
+            <div class="flex">
                 <flux:spacer />
                 <flux:button type="submit" variant="primary">Save changes</flux:button>
             </div>
