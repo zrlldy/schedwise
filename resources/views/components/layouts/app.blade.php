@@ -2,6 +2,15 @@
     <flux:main>
 
         {{-- this is the one that holds everything  --}}
+
+
+
+
+
+
+
+
+        
         {{-- this is the main page  --}}
         {{ $slot }}
 

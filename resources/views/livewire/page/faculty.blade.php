@@ -10,16 +10,16 @@
 
         <div class="flex flex-row justify-between w-full mt-5 gap-2 ">
             <div class="ml-4 flex gap-4">
-                <flux:input as="input" placeholder="Search..." icon="magnifying-glass" kbd="⌘K"  />
+                <flux:input as="input" placeholder="Search..." icon="magnifying-glass" kbd="⌘K" />
                 <flux:dropdown>
                     <flux:button icon:trailing="chevron-down">Department</flux:button>
 
                     <flux:menu>
                         <flux:menu.item icon="pencil-square" kbd="⌘S">BSIT</flux:menu.item>
                         <flux:menu.item icon="document-duplicate" kbd="⌘D">BSIE</flux:menu.item>
-                        <flux:menu.item icon="trash" variant="danger" kbd="⌘⌫">BEED</flux:menu.item>
-                        <flux:menu.item icon="trash" variant="danger" kbd="⌘⌫">BTLED</flux:menu.item>
-                1z
+                        <flux:menu.item icon="trash" kbd="⌘⌫">BEED</flux:menu.item>
+                        <flux:menu.item icon="trash" kbd="⌘⌫">BTLED</flux:menu.item>
+
                     </flux:menu>
                 </flux:dropdown>
             </div>
@@ -29,7 +29,7 @@
             <div class="mr-10">
 
                 <flux:modal.trigger name="add-faculty">
-                <flux:button variant="primary" color="teal">Add Faculty</flux:button>
+                    <flux:button variant="primary" color="teal">Add Faculty</flux:button>
                 </flux:modal.trigger>
 
 
@@ -43,35 +43,35 @@
                 <table class="table">
                     <!-- head -->
                     <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Job</th>
-                        <th>Favorite Color</th>
-                    </tr>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Job</th>
+                            <th>Favorite Color</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <!-- row 1 -->
-                    <tr class="bg-base-200">
-                        <th>1</th>
-                        <td>Cy Ganderton</td>
-                        <td>Quality Control Specialist</td>
-                        <td>Blue</td>
-                    </tr>
-                    <!-- row 2 -->
-                    <tr>
-                        <th>2</th>
-                        <td>Hart Hagerty</td>
-                        <td>Desktop Support Technician</td>
-                        <td>Purple</td>
-                    </tr>
-                    <!-- row 3 -->
-                    <tr>
-                        <th>3</th>
-                        <td>Brice Swyre</td>
-                        <td>Tax Accountant</td>
-                        <td>Red</td>
-                    </tr>
+                        <!-- row 1 -->
+                        <tr class="bg-base-200">
+                            <th>1</th>
+                            <td>Cy Ganderton</td>
+                            <td>Quality Control Specialist</td>
+                            <td>Blue</td>
+                        </tr>
+                        <!-- row 2 -->
+                        <tr>
+                            <th>2</th>
+                            <td>Hart Hagerty</td>
+                            <td>Desktop Support Technician</td>
+                            <td>Purple</td>
+                        </tr>
+                        <!-- row 3 -->
+                        <tr>
+                            <th>3</th>
+                            <td>Brice Swyre</td>
+                            <td>Tax Accountant</td>
+                            <td>Red</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
