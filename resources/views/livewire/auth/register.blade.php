@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6 border rounded-2xl p-4">
+<div class="flex flex-col gap-6 border rounded-lg w-110 p-10 shadow-2xl ">
     <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
 
     <!-- Session Status -->

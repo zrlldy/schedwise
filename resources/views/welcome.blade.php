@@ -32,7 +32,7 @@
     {{-- <nav class="  w-full shadow-sm border rounded-xl p-4 mt-10 bg-red-600"> --}}
 
     <nav
-        class="fixed top-0 z-50 w-[60%] bg-[#373434] dark:bg-zinc-900 flex items-center justify-between gap-4 p-4 shadow-sm border border-amber-100 rounded-2xl mt-8 text-white">
+        class="fixed top-0 z-50 w-[60%] bg-[#373434] dark:bg-zinc-900 flex items-center justify-between gap-4 p-4 shadow-2xl border border-amber-100 rounded-2xl mt-8 text-white">
         <h1></h1>
         <h1></h1>
         <h1 class="text-center flex items-center justify-center font-bold ">Schedwise</h1>

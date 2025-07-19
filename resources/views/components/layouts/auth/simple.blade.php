@@ -8,14 +8,14 @@
 <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
 
     <div class="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10 ">
-        <div class="bg-gray-600 w-full text-center max-w-[80%] rounded-2xl p-4">
+        <div class="bg-gray-600 w-full text-center max-w-[80%] rounded-2xl p-4 shadow-2xl">
             <heade class="font-bold text-2xl text-white"> Schedwise</header>
         </div>
 
 
 
 
-        <div class="flex flex-row    w-[80%] justify-between ">
+        <div class="flex flex-row  w-[80%] justify-between ">
             <div class="flex flex-col  justify-center  ">
                 <div class="font-bold text-3xl">Welcome to Schedwise!</div>
                 <div class="text-gray-500 text-start">Your Timetabling Scheduling System</div>
